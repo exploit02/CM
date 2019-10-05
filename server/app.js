@@ -5,7 +5,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-var indexRouter = require('./routes/index');
+
 var usersRouter = require('./routes/users');
 var candidateRouter = require('./routes/candidate');
 
@@ -38,7 +38,7 @@ app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true
 }));
-app.use('/', indexRouter);
+
 app.use('/users', usersRouter);
 app.use('/candidates', candidateRouter);
 
