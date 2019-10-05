@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
-import TopNav from './TopNav'
+import NavBar from './navBar'
 
 export class dashboard extends Component {
     render() {
         return (
-            <TopNav/>
+            <NavBar/>
         )
     }
 }

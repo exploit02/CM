@@ -1,10 +1,56 @@
-import React from "react";
+import React, { Component } from 'react';
 import { MDBContainer, MDBRow, MDBCol, MDBBtn, MDBCard, MDBCardBody, MDBIcon } from 'mdbreact';
 import  './../css/login.css'
+import {UserService} from './../services/userService';
+import  { notification }  from '../util/notification';
 
-const FormPage = () => {
-  return (
-        <MDBContainer >
+
+export class login extends Component {
+  constructor(props) {
+    super(props)
+  
+    this.state = {
+       email: null,
+       password: null
+    }
+  }
+  
+  handleChange = (event) => {
+    this.setState({
+        [event.target.name]: event.target.value
+    })
+  }
+
+ handleSubmitForm = async (event) => {
+    event.preventDefault();
+
+    if(this.state.email && this.state.password){
+        const res = await UserService.login(this.state)
+
+        if(res.status == 201){
+            localStorage.setItem("token", res.data.token);
+            localStorage.setItem("email", res.data.user.email);
+            localStorage.setItem("name", res.data.user.firstName);
+            this.setState({
+                email: null ,
+                password: null 
+            });
+            this.props.history.push("/dashboard");
+            notification.createNotification(res.status,"Logged in Successfully")
+        }else{
+          console.log(res);
+          notification.createNotification(res.status, res.message)
+        }
+
+    }else{
+        notification.createNotification(400,"Did you miss filling some field.")
+    }
+
+ }
+
+  render() {
+    return (
+      <MDBContainer >
       <MDBRow className="login_row_margin">
       <MDBCol md="7">
       </MDBCol>
@@ -23,6 +69,8 @@ const FormPage = () => {
                   type="text"
                   id="defaultFormCardNameEx"
                   className="form-control"
+                  name="email"
+                  onChange={this.handleChange}
                 />
                 <br />
                 <label
@@ -32,14 +80,15 @@ const FormPage = () => {
                   Your Password
                 </label>
                 <input
-                  type="email"
+                  type="password"
                   id="defaultFormCardEmailEx"
                   className="form-control"
+                  name="password"
+                  onChange={this.handleChange}
                 />
                 <div className="text-center py-4 mt-3">
-                  <MDBBtn className="btn btn-outline-purple" type="submit">
+                  <MDBBtn className="btn btn-outline-purple" type="submit" onClick={this.handleSubmitForm}>
                     Log In
-                    {/* <MDBIcon far icon="paper-plane" className="ml-2" /> */}
                   </MDBBtn>
                 </div>
               </form>
@@ -48,7 +97,8 @@ const FormPage = () => {
         </MDBCol>
       </MDBRow>
     </MDBContainer>
-  );
-};
+    )
+  }
+}
 
-export default FormPage;
+export default login

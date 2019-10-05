@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { MDBContainer, MDBBtn, MDBTable, MDBTableBody, MDBTableHead, MDBIcon, MDBPagination, MDBPageItem, MDBPageNav, MDBCol, MDBRow  } from 'mdbreact';
 import TopNav from './TopNav';
+import NavBar from './navBar';
 import { Link } from 'react-router-dom'
 import { MDBDataTable } from 'mdbreact';
 import {CandidateService} from '../services/candidateService'
@@ -29,10 +30,13 @@ export class candidateIndex extends Component {
       candidateDataSliceFormat.phone_number = candidateDataSlice.phone_number;
       candidateDataSliceFormat.city = candidateDataSlice.city;
       candidateDataSliceFormat.bank_account = candidateDataSlice.bank_account ? 'Yes' : 'No';
-      candidateDataSliceFormat.action = <Link to={{pathname :`/updatecandidate`, state: {Id:candidateDataSlice._id} }}>
+      candidateDataSliceFormat.action = <span className=""><Link to={{pathname :`/updatecandidate`, state: {Id:candidateDataSlice._id} }}>
                                         &nbsp;&nbsp;&nbsp;
                                         <MDBIcon icon="user-edit" /> &nbsp;&nbsp; 
-                                      </Link>
+                                      </Link><Link to={{pathname :`/updatecandidate`, state: {Id:candidateDataSlice._id} }}>
+                                        &nbsp;&nbsp;&nbsp;
+                                        <MDBIcon icon="user-edit" /> &nbsp;&nbsp; 
+                                      </Link></span>
       formattedCandidatedata.push(candidateDataSliceFormat)
     })
     
@@ -78,18 +82,19 @@ export class candidateIndex extends Component {
           label: 'Has Bank Account',
           field: 'bank_account',
           sort: 'asc',
-          width: 270
+          width: 200
         },
         {
-          label: 'Action',
-          field: 'action'
+          label: `ActionButton`,
+          field: 'action',
+          width: 100
         }
       ],
       rows: this.state.candidateData
     };
     return (
       <div>
-        <TopNav/>
+        <NavBar/>
           <MDBContainer>
             <Link to={{pathname :`/addcandidates`, state: {Id:null} }}>
               <MDBBtn rounded color="info" style={{float:'right'}}>

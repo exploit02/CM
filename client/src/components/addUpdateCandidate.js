@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { MDBContainer, MDBBtn,MDBRow, MDBCol, MDBTable,MDBInput, MDBTableBody, MDBTableHead, MDBCard, MDBCardBody, MDBIcon, MDBPagination, MDBPageItem, MDBPageNav, MDBFormInline} from 'mdbreact';
 import TopNav from './../components/TopNav';
+import NavBar from './../components/navBar';
 import {CandidateService} from '../services/candidateService'
 import Select from 'react-select';
 import DatePicker from 'react-date-picker';
@@ -167,7 +168,7 @@ export class addUpdateCandidate extends Component {
     render() {
         return (
             <div>
-                <TopNav/>            
+                <NavBar/>            
                 <MDBContainer>
                     <MDBRow className="login_row_margin">
                         <MDBCol>
