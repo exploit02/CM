@@ -26,7 +26,7 @@ render() {
               <MDBNavLink to="#!">Home</MDBNavLink>
             </MDBNavItem>
             <MDBNavItem>
-              <MDBNavLink to="/candidates">Candidate</MDBNavLink>
+              <MDBNavLink to="/candidates">Candidates</MDBNavLink>
             </MDBNavItem>
           </MDBNavbarNav>
           <MDBNavbarNav right>

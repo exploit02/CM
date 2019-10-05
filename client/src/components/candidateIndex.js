@@ -1,71 +1,112 @@
-import React from 'react';
+import React, { Component } from 'react'
 import { MDBContainer, MDBBtn, MDBTable, MDBTableBody, MDBTableHead, MDBIcon, MDBPagination, MDBPageItem, MDBPageNav, MDBCol, MDBRow  } from 'mdbreact';
-import TopNav from './TopNav'
+import TopNav from './TopNav';
+import { Link } from 'react-router-dom'
+import { MDBDataTable } from 'mdbreact';
+import {CandidateService} from '../services/candidateService'
 
-const BasicTable = () => {
-  return (
+
+
+
+export class candidateIndex extends Component {
+  constructor(props) {
+    super(props)
+  
+    this.state = {
+      candidateData : []
+    }
+  }
+  
+
+  async componentDidMount (){
+    const candidateData = await CandidateService.getCandidate()
+    
+    var formattedCandidatedata = []
+    candidateData.map((candidateDataSlice , index) => {
+      var candidateDataSliceFormat ={};
+      candidateDataSliceFormat.name = candidateDataSlice.name;
+      candidateDataSliceFormat.aadhar_no = candidateDataSlice.aadhar_no;
+      candidateDataSliceFormat.phone_number = candidateDataSlice.phone_number;
+      candidateDataSliceFormat.city = candidateDataSlice.city;
+      candidateDataSliceFormat.bank_account = candidateDataSlice.bank_account ? 'Yes' : 'No';
+      candidateDataSliceFormat.action = <Link to={{pathname :`/updatecandidate`, state: {Id:candidateDataSlice._id} }}>
+                                        &nbsp;&nbsp;&nbsp;
+                                        <MDBIcon icon="user-edit" /> &nbsp;&nbsp; 
+                                      </Link>
+      formattedCandidatedata.push(candidateDataSliceFormat)
+    })
+    
+    this.setState({
+      candidateData:formattedCandidatedata
+    })
+  }
+
+
+
+
+
+
+
+  render() {
+    var data = {
+      columns: [
+        {
+          label: 'Name',
+          field: 'name',
+          sort: 'asc',
+          width: 150
+        },
+        {
+          label: 'Aadhar Number',
+          field: 'aadhar_no',
+          sort: 'asc',
+          width: 270
+        },
+        {
+          label: 'Mobile Number',
+          field: 'phone_number',
+          sort: 'asc',
+          width: 200
+        },
+        {
+          label: 'City',
+          field: 'city',
+          sort: 'asc',
+          width: 100
+        },
+        {
+          label: 'Has Bank Account',
+          field: 'bank_account',
+          sort: 'asc',
+          width: 270
+        },
+        {
+          label: 'Action',
+          field: 'action'
+        }
+      ],
+      rows: this.state.candidateData
+    };
+    return (
       <div>
-          <TopNav/>
+        <TopNav/>
           <MDBContainer>
-          <MDBBtn outline color="primary" style={{float:'right'}}>
-          <MDBIcon icon="plus" />
-            Add New</MDBBtn>
-          <MDBTable>
-      <MDBTableHead color="primary-color" textWhite>
-        <tr>
-          <th>First</th>
-          <th>Last</th>
-          <th>Handle</th>
-        </tr>
-      </MDBTableHead>
-      <MDBTableBody>
-        <tr>
-          <td>Mark</td>
-          <td>Otto</td>
-          <td>@mdo</td>
-        </tr>
-        <tr>
-          <td>Jacob</td>
-          <td>Thornton</td>
-          <td>@fat</td>
-        </tr>
-        <tr>
-          <td>Larry</td>
-          <td>the Bird</td>
-          <td>@twitter</td>
-        </tr>
-      </MDBTableBody>
-    </MDBTable>
-    <MDBRow style={{float:'right'}}>
-      <MDBCol>
-        <MDBPagination className="mb-5">
-          <MDBPageItem>
-            <MDBPageNav aria-label="Previous">
-              <span aria-hidden="true">Previous</span>
-            </MDBPageNav>
-          </MDBPageItem>
-          <MDBPageItem>
-            <MDBPageNav>
-              1
-            </MDBPageNav>
-          </MDBPageItem>
-          <MDBPageItem>
-            <MDBPageNav>2</MDBPageNav>
-          </MDBPageItem>
-          <MDBPageItem>
-            <MDBPageNav>3</MDBPageNav>
-          </MDBPageItem>
-          <MDBPageItem>
-            <MDBPageNav aria-label="Previous">
-              <span aria-hidden="true">Next</span>
-            </MDBPageNav>
-          </MDBPageItem>
-        </MDBPagination>
-      </MDBCol>
-    </MDBRow>
+            <Link to={{pathname :`/addcandidates`, state: {Id:null} }}>
+              <MDBBtn rounded color="info" style={{float:'right'}}>
+                <MDBIcon icon="user-plus" />
+              </MDBBtn>
+            </Link>
+
+            <MDBDataTable
+              striped
+              bordered
+              hover
+              data={data}
+            />
           </MDBContainer>
-    </div>
-  );
+      </div>
+    )
+  }
 }
 
-export default BasicTable;
+export default candidateIndex

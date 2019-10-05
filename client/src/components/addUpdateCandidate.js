@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
 import { MDBContainer, MDBBtn,MDBRow, MDBCol, MDBTable,MDBInput, MDBTableBody, MDBTableHead, MDBCard, MDBCardBody, MDBIcon, MDBPagination, MDBPageItem, MDBPageNav, MDBFormInline} from 'mdbreact';
 import TopNav from './../components/TopNav';
+import {CandidateService} from '../services/candidateService'
 import Select from 'react-select';
 import DatePicker from 'react-date-picker';
+import  { notification }  from '../util/notification';
  
 const gender = [
     { value: 'Male', label: 'Male', name:'gender' },
@@ -62,6 +64,7 @@ export class addUpdateCandidate extends Component {
         super(props)
     
         this.state = {
+            _id:null,
             aadhar_no: null,
             name: null,
             phone_number:null,
@@ -78,16 +81,49 @@ export class addUpdateCandidate extends Component {
             source: null,
             source_type: null, 
             employment_status: null, 
-            occupation: null, 
+            occupation: null,
+            annual_income: null, 
             educational_qualification: null,
             successful_enterprises: null,
             failed_enterprises: null,
             bank_account: false,
             credit_history: false,
             needs_training: false
-
         }
 
+    }
+
+    componentDidMount = async () =>{
+        if(this.props.location.state.Id){
+            const candidateData = await CandidateService.selectedCandidate(this.props.location.state.Id)
+            this.setState({
+                _id:candidateData._id,
+                aadhar_no: candidateData.aadhar_no,
+                name: candidateData.name,
+                phone_number: candidateData.phone_number,
+                dob: candidateData.dob,
+                alternate_phone_number: candidateData.alternate_phone_number,
+                email: candidateData.email,
+                gender: candidateData.gender,
+                address_1: candidateData.address_1,
+                address_2: candidateData.address_2,
+                city: candidateData.city,
+                district: candidateData.district,
+                state: candidateData.state,
+                country: candidateData.country,
+                source: candidateData.source,
+                source_type: candidateData.source_type, 
+                employment_status: candidateData.employment_status, 
+                occupation: candidateData.occupation,
+                annual_income: candidateData.annual_income, 
+                educational_qualification: candidateData.educational_qualification,
+                successful_enterprises: candidateData.successful_enterprises,
+                failed_enterprises: candidateData.failed_enterprises,
+                bank_account: candidateData.bank_account,
+                credit_history: candidateData.credit_history,
+                needs_training: candidateData.needs_training
+            })
+        }
     }
 
     inputHandler = (event)=>{
@@ -98,7 +134,7 @@ export class addUpdateCandidate extends Component {
     
 
     radioHandler = (name, val) =>()=>{
-        this.setState({[name]:val}, console.log(this.state))
+        this.setState({[name]:val})
     }
 
     selectHandler = (event)=>{
@@ -108,9 +144,27 @@ export class addUpdateCandidate extends Component {
     }
 
     dateHandler = dob => this.setState({ dob:dob })
+
+    submitHandler = async (event) =>{
+        event.preventDefault();
+        const candidateServiceResponse = await CandidateService.addCandidate(this.state)
+        if(candidateServiceResponse.status === 201){
+            this.props.history.push("/candidates");
+            notification.createNotification(candidateServiceResponse.status,"Candidate Created Successfully")
+        }
+    }
+
+    updateHandler = async (event) =>{
+        event.preventDefault();
+        const candidateServiceResponse = await CandidateService.updateCandidate(this.state)
+        if(candidateServiceResponse.status === 200){
+            this.props.history.push("/candidates");
+            notification.createNotification(candidateServiceResponse.status,"Candidate Updated Successfully")
+        }
+    }
+
     
     render() {
-        console.log(this.state)
         return (
             <div>
                 <TopNav/>            
@@ -119,8 +173,14 @@ export class addUpdateCandidate extends Component {
                         <MDBCol>
                             <MDBCard>
                                 <MDBCardBody>
-                                    <form>
-                                        <p className="h4 text-center py-4">Fill Candidate Details</p>
+                                    <form >
+                                        {
+                                         this.props.location.state.Id === null ?
+                                         <p className="h4 text-center py-4">Fill Candidate Details</p>
+                                         :
+                                         <p className="h4 text-center py-4">Update Candidate Details</p>
+                                        }
+                                        
                                         <MDBRow className="">
                                             <MDBCol md="6">
                                                 <MDBInput label="Aadhar Number" name="aadhar_no" onChange={this.inputHandler} value={this.state.aadhar_no}/>
@@ -248,9 +308,16 @@ export class addUpdateCandidate extends Component {
                                             
                                         </MDBRow>
                                         <div className="text-center py-4 mt-3">
-                                            <MDBBtn className="btn btn-outline-purple" type="submit">
+                                            {
+                                                this.props.location.state.Id === null? 
+                                                <MDBBtn className="btn btn-outline-purple" type="submit" name="submit" onClick={this.submitHandler}>
                                                 Submit
-                                            </MDBBtn>
+                                            </MDBBtn> :
+                                            <MDBBtn className="btn btn-outline-purple" type="submit" name="update" onClick={this.updateHandler}>
+                                            Update
+                                        </MDBBtn>
+                                            }
+                                            
                                         </div>
                                     </form>
                                 </MDBCardBody>

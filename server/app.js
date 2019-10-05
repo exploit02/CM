@@ -1,11 +1,13 @@
 var createError = require('http-errors');
 var express = require('express');
+var cors = require('cors');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var candidateRouter = require('./routes/candidate');
 
 var app = express();
 
@@ -19,8 +21,26 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+//Database Connection
+const dbConfig = require('./config/dbConfig');
+const mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
+mongoose.connect(dbConfig.url, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then(() => {
+  console.log("Successfully connected to the database");    
+}).catch(err => {
+  console.log('Could not connect to the database. Exiting now...', err);
+  process.exit();
+});
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/candidates', candidateRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
